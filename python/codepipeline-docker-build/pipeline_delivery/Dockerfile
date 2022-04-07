@@ -1,2 +1,2 @@
-FROM python:3.7.2-alpine
+FROM python:3.11.0a7-alpine
 RUN pip install awscli
