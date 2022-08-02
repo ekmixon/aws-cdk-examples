@@ -25,7 +25,10 @@ logger.setLevel(logging.INFO)
 def search_label(label, country = None, language = None):
     if language and language != 'en':
         translated_label = translate(language, label)
-        logger.info("Translated label {} ({}) to {} (en).".format(label, language, translated_label))
+        logger.info(
+            f"Translated label {label} ({language}) to {translated_label} (en)."
+        )
+
         label = translated_label
 
     statement = "SELECT image_id FROM tags WHERE label=:label"
@@ -35,12 +38,9 @@ def search_label(label, country = None, language = None):
     logger.info(result)
 
     response = []
-    
+
     for record in result["records"]:
-        for item in record:
-            response.append({
-                "id": item["stringValue"]
-            })
+        response.extend({"id": item["stringValue"]} for item in record)
 
     return {
         'statusCode': 200,

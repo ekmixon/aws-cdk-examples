@@ -10,7 +10,7 @@ LOG.setLevel(logging.INFO)
 
 
 def main(event, context):
-    LOG.info("EVENT: " + json.dumps(event))
+    LOG.info(f"EVENT: {json.dumps(event)}")
 
     query_string_params = event["queryStringParameters"]
     if query_string_params is not None:
@@ -19,9 +19,8 @@ def main(event, context):
             return create_short_url(event)
 
     path_parameters = event['pathParameters']
-    if path_parameters is not None:
-        if path_parameters['proxy'] is not None:
-            return read_short_url(event)
+    if path_parameters is not None and path_parameters['proxy'] is not None:
+        return read_short_url(event)
 
     return {
         'statusCode': 200,
@@ -37,7 +36,7 @@ def create_short_url(event):
     target_url = event["queryStringParameters"]['targetUrl']
 
     # Create a unique id (take first 8 chars)
-    id = str(uuid.uuid4())[0:8]
+    id = str(uuid.uuid4())[:8]
 
     # Create item in DynamoDB
     dynamodb = boto3.resource('dynamodb')
@@ -56,7 +55,7 @@ def create_short_url(event):
     return {
         'statusCode': 200,
         'headers': {'Content-Type': 'text/plain'},
-        'body': "Created URL: %s" % url
+        'body': f"Created URL: {url}",
     }
 
 
@@ -71,15 +70,16 @@ def read_short_url(event):
     ddb = boto3.resource('dynamodb')
     table = ddb.Table(table_name)
     response = table.get_item(Key={'id': id})
-    LOG.debug("RESPONSE: " + json.dumps(response))
+    LOG.debug(f"RESPONSE: {json.dumps(response)}")
 
     item = response.get('Item', None)
     if item is None:
         return {
             'statusCode': 400,
             'headers': {'Content-Type': 'text/plain'},
-            'body': 'No redirect found for ' + id
+            'body': f'No redirect found for {id}',
         }
+
 
     # Respond with a redirect
     return {

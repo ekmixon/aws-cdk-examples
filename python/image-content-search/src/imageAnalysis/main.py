@@ -39,20 +39,17 @@ def handler(event, context):
         # original_last_modified = message['original_last_modified']
         # etag = message['etag']
 
-        logger.info('Processing {}.'.format(key))
+        logger.info(f'Processing {key}.')
 
         detected_labels = rekognition_client.detect_labels(
             Image={'S3Object': {'Bucket': bucket, 'Name': key}},
             MaxLabels=20,
             MinConfidence=85)
-            
+
         detected_unsafe_contents = rekognition_client.detect_moderation_labels(
             Image={'S3Object': {'Bucket': bucket, 'Name': key}})
-               
-        object_labels = []
 
-        for l in detected_labels['Labels']:
-            object_labels.append(l['Name'].lower()) # add objects in image
+        object_labels = [l['Name'].lower() for l in detected_labels['Labels']]
 
         for l in detected_unsafe_contents['ModerationLabels']:
             if ('offensive' not in object_labels): object_labels.append("offensive") #label image as offensive

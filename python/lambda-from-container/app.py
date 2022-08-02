@@ -11,9 +11,6 @@ class LambdaContainerFunctionStack(core.Stack):
         super().__init__(scope, id, **kwargs)
 
 
-        image_name    = "lambdaContainerFunction"
-        image_version = "latest"
-
         ##
         ## If use_pre_existing_image is True
         ## then use an image that already exists in ECR.
@@ -26,7 +23,10 @@ class LambdaContainerFunctionStack(core.Stack):
         ##
         ## ECR
         ##
-        if (use_pre_existing_image):
+        if use_pre_existing_image:
+
+            image_name    = "lambdaContainerFunction"
+            image_version = "latest"
 
             ##
             ## Container was build previously, or elsewhere.

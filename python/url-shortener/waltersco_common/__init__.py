@@ -38,8 +38,8 @@ class WaltersCoStack(Stack):
         :param api: The API gateway endpoint
         :return: The base url (e.g. "https://www.waltersco.co")
         """
-        domain_name = subdomain + '.' + ZONE_NAME
-        url = 'https://' + domain_name
+        domain_name = f'{subdomain}.{ZONE_NAME}'
+        url = f'https://{domain_name}'
 
         cert = aws_certificatemanager.Certificate.from_certificate_arn(self, 'DomainCertificate', ZONE_CERT)
         hosted_zone = aws_route53.HostedZone.from_hosted_zone_attributes(self, 'HostedZone',

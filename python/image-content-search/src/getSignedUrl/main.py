@@ -13,8 +13,11 @@ default_signedurl_expiry_seconds = os.environ['DEFAULT_SIGNEDURL_EXPIRY_SECONDS'
 # creates a pre-sighned URL for uploading image to S3 and returns it
 
 def handler(event, context):
-    uniquehash = hashlib.sha1("{}".format(time.time_ns()).encode('utf-8')).hexdigest()
-    result = create_presigned_post(images_bucket, "new/{}/{}".format(uniquehash[:2],uniquehash))
+    uniquehash = hashlib.sha1(f"{time.time_ns()}".encode('utf-8')).hexdigest()
+    result = create_presigned_post(
+        images_bucket, f"new/{uniquehash[:2]}/{uniquehash}"
+    )
+
 
     return {
         'statusCode': 200,

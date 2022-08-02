@@ -31,12 +31,9 @@ def handler(event, context):
     elif source == "EventBridge": # Event Bridge => image labels
         image_id = event["detail"]["image_id"]
         labels = event["detail"]["labels"]
-        response = insert_new_image(image_id, labels)
-        return response
+        return insert_new_image(image_id, labels)
     elif source == "API": #API Gateway => search 
         if "language" in event:
-            response = search_label(event["label"], event["country"], event["language"])
+            return search_label(event["label"], event["country"], event["language"])
         else:
-            response = search_label(event["label"])
-
-        return response
+            return search_label(event["label"])

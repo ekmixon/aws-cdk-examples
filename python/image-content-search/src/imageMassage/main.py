@@ -25,7 +25,7 @@ def handler(event, context):
         newKey = record['s3']['object']['key']
         bucket = record['s3']['bucket']['name']
         name = bucket.split("/")[-1]
-        localfile = "/tmp/{}".format(name)
+        localfile = f"/tmp/{name}"
 
         # download the file
         new_key_obj = s3.Object(bucket, newKey)
@@ -35,7 +35,7 @@ def handler(event, context):
         image_SHA1 = getSha1(localfile)
 
         # check if not exist
-        processed_key = "processed/{}/{}".format(image_SHA1[:2], image_SHA1)
+        processed_key = f"processed/{image_SHA1[:2]}/{image_SHA1}"
         key_is_processed = isS3ObjectExist(bucket, processed_key)
         if key_is_processed: continue
 
@@ -49,10 +49,10 @@ def handler(event, context):
 
         queue = sqs.get_queue_by_name(QueueName=queue_name)
         response = queue.send_message(MessageBody=message)
-        logger.info("Message {} has been sent.".format(response.get('MessageId')))
+        logger.info(f"Message {response.get('MessageId')} has been sent.")
 
         #move the image
-        s3.Object(bucket, processed_key).copy_from(CopySource="{}/{}".format(bucket,newKey))
+        s3.Object(bucket, processed_key).copy_from(CopySource=f"{bucket}/{newKey}")
         new_key_obj.delete()
 
         # delete local file
@@ -77,8 +77,9 @@ def getSha1(filepath):
 
     with open(filepath, 'rb') as f:
         while True:
-            data = f.read(65536) # read in 64kb chunks
-            if not data: break
-            sha1.update(data)
+            if data := f.read(65536):
+                sha1.update(data)
 
+            else:
+                break
     return sha1.hexdigest()

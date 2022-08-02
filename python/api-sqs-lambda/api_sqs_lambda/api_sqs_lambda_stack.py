@@ -50,9 +50,10 @@ class ApiSqsLambdaStack(core.Stack):
         api_resource_sqs_integration = apigw.AwsIntegration(
             service="sqs",
             integration_http_method="POST",
-            path="{}/{}".format(core.Aws.ACCOUNT_ID, queue.queue_name),
-            options=api_integration_options
+            path=f"{core.Aws.ACCOUNT_ID}/{queue.queue_name}",
+            options=api_integration_options,
         )
+
 
         #Create a Method Response Object: https://docs.aws.amazon.com/cdk/api/latest/python/aws_cdk.aws_apigateway/MethodResponse.html
         method_response = apigw.MethodResponse(status_code="200")

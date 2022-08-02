@@ -99,19 +99,17 @@ class Asteroids:
         Args:
             payload (b'str'): Binary string of asteroid data to be processed.
         """
-        json_file = open(f"/tmp/asteroids_{self.today}.json",'w')
-        json_file.write(json.dumps(payload, indent=4))
-        json_file.close()
+        with open(f"/tmp/asteroids_{self.today}.json",'w') as json_file:
+            json_file.write(json.dumps(payload, indent=4))
 
     def asteroids_csv(self, payload):
         """Creates .csv object from payload content then writes to .csv file.
         """
-        csv_file=open(f"/tmp/asteroids_{self.today}.csv",'w', newline='\n')
-        fields=list(payload[0].keys())
-        writer=csv.DictWriter(csv_file, fieldnames=fields)
-        writer.writeheader()
-        writer.writerows(payload)
-        csv_file.close()
+        with open(f"/tmp/asteroids_{self.today}.csv",'w', newline='\n') as csv_file:
+            fields=list(payload[0].keys())
+            writer=csv.DictWriter(csv_file, fieldnames=fields)
+            writer.writeheader()
+            writer.writerows(payload)
 
     def get_secret(self):
         """Gets secret from AWS Secrets Manager
